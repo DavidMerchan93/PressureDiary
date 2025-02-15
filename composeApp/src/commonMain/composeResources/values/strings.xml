@@ -1,0 +1,10 @@
+<resources>
+    <string name="title_press_systolic">Presión sistólica</string>
+    <string name="title_press_diastolic">Presión diastólica</string>
+    <string name="title_press_item">Presión Sistolica / Presión Diastólica</string>
+    <string name="title_logs">Registros</string>
+    <string name="title_field_date">DD/MM/AAAA</string>
+
+    <string name="btn_show_all">Ver todos</string>
+
+</resources>
