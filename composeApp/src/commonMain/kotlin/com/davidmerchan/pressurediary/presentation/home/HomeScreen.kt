@@ -1,0 +1,228 @@
+package com.davidmerchan.pressurediary.presentation.home
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.davidmerchan.pressurediary.presentation.addLog.AddLogBottomSheet
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import pressurediary.composeapp.generated.resources.Res
+import pressurediary.composeapp.generated.resources.btn_show_all
+import pressurediary.composeapp.generated.resources.title_field_date
+import pressurediary.composeapp.generated.resources.title_logs
+import pressurediary.composeapp.generated.resources.title_press_diastolic
+import pressurediary.composeapp.generated.resources.title_press_item
+import pressurediary.composeapp.generated.resources.title_press_systolic
+
+data class PressureModel(
+    val pressureA: Double,
+    val pressureB: Double,
+    val date: Long
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+) {
+    var showAddLogDialog by remember { mutableStateOf(false) }
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Daily Pressure")
+                },
+                actions = {
+                    TextButton(
+                        onClick = {
+                            showAddLogDialog != showAddLogDialog
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null
+                )
+            }
+        }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .padding(8.dp),
+        ) {
+            Column {
+                LastRecords()
+            }
+        }
+
+        AddLogBottomSheet(
+            isOpen = showAddLogDialog,
+            onDismiss = { showAddLogDialog = false }
+        ) {
+            Column {
+                TextField(
+                    value = "",
+                    onValueChange = {},
+                    label = {
+                        Text(stringResource(Res.string.title_press_systolic))
+                    }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                TextField(
+                    value = "",
+                    onValueChange = {},
+                    label = {
+                        Text(stringResource(Res.string.title_press_diastolic))
+                    }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                TextField(
+                    value = "",
+                    onValueChange = {},
+                    label = {
+                        Text(stringResource(Res.string.title_field_date))
+                    }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = {}
+                ) {
+                    Text("Guardar")
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun LastRecords(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.elevatedCardElevation(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp),
+                    text = stringResource(Res.string.title_logs),
+                    fontSize = 20.sp,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                TextButton(
+                    onClick = {}
+                ) {
+                    Row {
+                        Text(stringResource(Res.string.btn_show_all))
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+            Column {
+                PressureLogItem(PressureModel(120.0, 80.0, 1739651112))
+                PressureLogItem(PressureModel(120.0, 80.0, 1739651112))
+                PressureLogItem(PressureModel(120.0, 80.0, 1739651112))
+            }
+        }
+    }
+}
+
+@Composable
+fun PressureLogItem(pressure: PressureModel) {
+    Column {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Text(
+                text = formatTimestamp(pressure.date),
+                fontSize = 18.sp
+            )
+            Text(
+                text = stringResource(Res.string.title_press_item),
+                fontSize = 12.sp,
+            )
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "${pressure.pressureA} / ${pressure.pressureB}",
+                fontSize = 28.sp,
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+        HorizontalDivider()
+    }
+}
+
+fun formatTimestamp(timestamp: Long): String {
+    val dateTime = Instant.fromEpochMilliseconds(timestamp)
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+
+    return "${dateTime.dayOfMonth}, ${dateTime.month} de ${dateTime.year}"
+}
