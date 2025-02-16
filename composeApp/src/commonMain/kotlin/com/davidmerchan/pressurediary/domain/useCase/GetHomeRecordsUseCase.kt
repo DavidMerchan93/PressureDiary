@@ -7,6 +7,10 @@ class GetHomeRecordsUseCase(
     private val pressureLogRepository: PressureLogRepository
 ) {
     suspend operator fun invoke(): Result<List<PressureLogModel>> {
-        return pressureLogRepository.getHomePressureLogs()
+        return pressureLogRepository.getHomePressureLogs(HOME_LOGS_SIZE)
+    }
+
+    companion object {
+        private const val HOME_LOGS_SIZE = 3
     }
 }

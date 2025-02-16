@@ -27,6 +27,9 @@
     <string name="title_general_error">Ups !!</string>
     <string name="messages_general_error">Lo sentimos, ha ocurrido un error inesperado, pronto lo solucionaremos.</string>
 
+    <string name="title_general_male">Hombre</string>
+    <string name="title_general_female">Mujer</string>
+
     <string name="btn_show_all">Ver todos</string>
     <string name="btn_save_record">Guardar</string>
     <string name="btn_select_date">Elegir fecha</string>

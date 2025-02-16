@@ -7,9 +7,9 @@ import com.davidmerchan.pressurediary.domain.repository.PressureLogRepository
 class PressureLogDatasource(
     private val localDataSource: LocalDataSource
 ) : PressureLogRepository {
-    override suspend fun getHomePressureLogs(): Result<List<PressureLogModel>> {
+    override suspend fun getHomePressureLogs(size: Int): Result<List<PressureLogModel>> {
         return try {
-            val data = localDataSource.getHomeRecords().map {
+            val data = localDataSource.getHomeRecords(size).map {
                 PressureLogModel(
                     id = it.id,
                     date = it.date,

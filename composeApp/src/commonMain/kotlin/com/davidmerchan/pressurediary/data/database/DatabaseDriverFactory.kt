@@ -15,10 +15,10 @@ class LocalDatabase(
     private val database = PressureDiaryDatabase(databaseDriverFactory.createDriver())
     private val query = database.pressureDiaryDatabaseQueries
 
-    override suspend fun getHomeRecords(): List<PressureLog> {
+    override suspend fun getHomeRecords(size: Int): List<PressureLog> {
         return query.selectAllPressureLogInfo()
             .executeAsList()
-            .takeLast(3)
+            .takeLast(size)
     }
 
     override suspend fun getAllRecords(): List<PressureLog> {

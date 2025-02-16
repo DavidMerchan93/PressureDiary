@@ -1,13 +1,7 @@
 package com.davidmerchan.pressurediary.presentation.newRecord
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,11 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.davidmerchan.pressurediary.presentation.components.HorizontalButtonItem
+import com.davidmerchan.pressurediary.presentation.components.HorizontalButtons
 import com.davidmerchan.pressurediary.presentation.components.PressureDialog
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
@@ -42,8 +37,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.dateTimeToString
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pressurediary.composeapp.generated.resources.Res
@@ -190,38 +183,29 @@ fun NewRecordScreen(
             Text(
                 text = stringResource(Res.string.title_user_state)
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                ActivityButton(
-                    image = Res.drawable.rest,
-                    title = stringResource(Res.string.title_status_rest),
-                    state = UserState.REST,
-                    isSelected = selectState == UserState.REST,
-                    onSelectState = {
-                        selectState = it
-                    }
-                )
-                ActivityButton(
-                    image = Res.drawable.run,
-                    title = stringResource(Res.string.title_status_run),
-                    state = UserState.RUN,
-                    isSelected = selectState == UserState.RUN,
-                    onSelectState = {
-                        selectState = it
-                    }
-                )
-                ActivityButton(
-                    image = Res.drawable.run_fast,
-                    title = stringResource(Res.string.title_status_run_fast),
-                    state = UserState.RUN_FAST,
-                    isSelected = selectState == UserState.RUN_FAST,
-                    onSelectState = {
-                        selectState = it
-                    }
-                )
-            }
+            HorizontalButtons(
+                buttons = listOf(
+                    HorizontalButtonItem(
+                        image = Res.drawable.rest,
+                        title = stringResource(Res.string.title_status_rest),
+                        state = UserState.REST
+                    ),
+                    HorizontalButtonItem(
+                        image = Res.drawable.run,
+                        title = stringResource(Res.string.title_status_run),
+                        state = UserState.RUN
+                    ),
+                    HorizontalButtonItem(
+                        image = Res.drawable.run_fast,
+                        title = stringResource(Res.string.title_status_run_fast),
+                        state = UserState.RUN_FAST
+                    ),
+                ),
+                selectState = selectState,
+                onSelectedState = {
+                    selectState = it
+                }
+            )
             Button(
                 onClick = {
                     when {
@@ -246,7 +230,6 @@ fun NewRecordScreen(
         }
     }
 }
-
 
 @Composable
 fun ErrorFormDialog(
@@ -337,48 +320,4 @@ private fun localDateTimeToMillis(localDateTime: LocalDateTime): Long {
     val instant: Instant = localDateTime.toInstant(TimeZone.currentSystemDefault())
     return instant.toEpochMilliseconds()
 
-}
-
-@Composable
-fun RowScope.ActivityButton(
-    image: DrawableResource,
-    title: String,
-    state: UserState,
-    isSelected: Boolean = false,
-    onSelectState: (UserState) -> Unit = {}
-) {
-    Button(
-        onClick = {
-            onSelectState(state)
-        },
-        modifier = Modifier
-            .padding(8.dp)
-            .weight(1f)
-            .aspectRatio(1f)
-            .then(
-                if (isSelected) {
-                    Modifier.border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                } else Modifier
-            ),
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Column {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                painter = painterResource(image),
-                contentDescription = null
-            )
-            Text(
-                text = title,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
 }
