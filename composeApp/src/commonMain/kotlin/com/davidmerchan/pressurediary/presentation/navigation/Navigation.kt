@@ -41,9 +41,6 @@ fun AppNavigation() {
             NewRecordScreen(
                 onBackPressed = {
                     navController.popBackStack()
-                },
-                onSaveRecord = {
-                    navController.popBackStack()
                 }
             )
         }

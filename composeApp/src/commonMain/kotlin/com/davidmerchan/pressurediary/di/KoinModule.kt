@@ -8,6 +8,7 @@ import com.davidmerchan.pressurediary.domain.useCase.GetAllRecordsUseCase
 import com.davidmerchan.pressurediary.domain.useCase.GetHomeRecordsUseCase
 import com.davidmerchan.pressurediary.domain.useCase.InsertNewRecordUseCase
 import com.davidmerchan.pressurediary.presentation.home.HomeViewModel
+import com.davidmerchan.pressurediary.presentation.newRecord.NewRecordViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -26,7 +27,8 @@ val sharedModule = module {
     single { InsertNewRecordUseCase(get()) }
 
     // Presentation
-    single { HomeViewModel(get()) }
+    factory { HomeViewModel(get()) }
+    factory { NewRecordViewModel(get()) }
 }
 
 fun initializeKoin(config: (KoinApplication.() -> Unit)? = null) {

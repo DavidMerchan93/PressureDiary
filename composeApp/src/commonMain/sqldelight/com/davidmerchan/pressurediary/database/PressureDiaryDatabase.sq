@@ -16,4 +16,5 @@ DELETE FROM PressureLog;
 
 selectAllPressureLogInfo:
 SELECT PressureLog.*
-FROM PressureLog;
+FROM PressureLog
+ORDER BY date DESC;

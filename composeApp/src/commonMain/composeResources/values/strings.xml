@@ -16,6 +16,8 @@
     <string name="title_status_rest">Reposo</string>
     <string name="title_status_run">Leve</string>
     <string name="title_status_run_fast">Intensa</string>
+    <string name="title_error_save_log">Lo sentimos, no se pudo guardar el registro.</string>
+    <string name="title_success_save_log">Registro almacenado con éxito.</string>
 
     <string name="btn_show_all">Ver todos</string>
     <string name="btn_save_record">Guardar</string>

@@ -19,10 +19,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,22 +37,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.davidmerchan.pressurediary.domain.model.PressureLogModel
+import com.davidmerchan.pressurediary.presentation.components.PressureDialog
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
+import network.chaintech.kmp_date_time_picker.ui.datepicker.WheelDatePickerDialog
+import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
+import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
+import network.chaintech.kmp_date_time_picker.utils.TimeFormat
+import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
+import network.chaintech.kmp_date_time_picker.utils.dateTimeToString
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import pressurediary.composeapp.generated.resources.Res
 import pressurediary.composeapp.generated.resources.btn_cancel_dialog
 import pressurediary.composeapp.generated.resources.btn_minus_date
@@ -61,6 +74,7 @@ import pressurediary.composeapp.generated.resources.btn_select_date
 import pressurediary.composeapp.generated.resources.rest
 import pressurediary.composeapp.generated.resources.run
 import pressurediary.composeapp.generated.resources.run_fast
+import pressurediary.composeapp.generated.resources.title_error_save_log
 import pressurediary.composeapp.generated.resources.title_field_date
 import pressurediary.composeapp.generated.resources.title_new_record
 import pressurediary.composeapp.generated.resources.title_press_diastolic
@@ -69,8 +83,8 @@ import pressurediary.composeapp.generated.resources.title_select_date
 import pressurediary.composeapp.generated.resources.title_status_rest
 import pressurediary.composeapp.generated.resources.title_status_run
 import pressurediary.composeapp.generated.resources.title_status_run_fast
+import pressurediary.composeapp.generated.resources.title_success_save_log
 import pressurediary.composeapp.generated.resources.title_user_state
-import kotlin.random.Random
 
 enum class UserState(
     val id: Int,
@@ -86,13 +100,38 @@ enum class UserState(
 @Composable
 fun NewRecordScreen(
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit,
-    onSaveRecord: (PressureLogModel) -> Unit
+    onBackPressed: () -> Unit
 ) {
-    var pressSystolic by remember { mutableStateOf("0.0") }
-    var pressDistolic by remember { mutableStateOf("0.0") }
+
+    val newRecordViewModel = koinViewModel<NewRecordViewModel>()
+    val newRecordState = newRecordViewModel.newRecordState.value
+
+    var sliderSystolic by remember { mutableStateOf(120f) }
+    var sliderDiastolic by remember { mutableStateOf(80f) }
+
     var selectState by remember { mutableStateOf(UserState.DEFAULT) }
     var selectedDate = 0L
+
+    when {
+        newRecordState.successSavedRecord -> {
+            PressureDialog(
+                onDismissRequest = {},
+                detail = stringResource(Res.string.title_success_save_log),
+                buttonOk = stringResource(Res.string.btn_ok_dialog),
+                onOk = {
+                    onBackPressed()
+                }
+            )
+        }
+
+        newRecordState.failureSavedRecord -> {
+            PressureDialog(
+                onDismissRequest = {},
+                detail = stringResource(Res.string.title_error_save_log),
+                buttonOk = stringResource(Res.string.btn_ok_dialog)
+            )
+        }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -102,7 +141,9 @@ fun NewRecordScreen(
                     Text(stringResource(Res.string.title_new_record))
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onBackPressed() }) {
+                    IconButton(onClick = {
+                        onBackPressed()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null
@@ -117,27 +158,24 @@ fun NewRecordScreen(
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            TextField(
-                value = pressSystolic,
+            PressureSlider(
+                pressure = sliderSystolic,
+                label = stringResource(Res.string.title_press_systolic),
+                minPressure = 90f,
+                maxPressure = 200f,
                 onValueChange = {
-                    pressSystolic = it
-                },
-                label = {
-                    Text(stringResource(Res.string.title_press_systolic))
-                },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                    sliderSystolic = it
+                }
             )
             Spacer(modifier = Modifier.height(12.dp))
-            TextField(
-                value = pressDistolic,
+            PressureSlider(
+                pressure = sliderDiastolic,
+                label = stringResource(Res.string.title_press_diastolic),
+                minPressure = 70f,
+                maxPressure = 120f,
                 onValueChange = {
-                    pressDistolic = it
-                },
-                label = {
-                    Text(stringResource(Res.string.title_press_diastolic))
-                },
-                modifier = Modifier.fillMaxWidth()
+                    sliderDiastolic = it
+                }
             )
             Spacer(modifier = Modifier.height(12.dp))
             DatePickerSelector(
@@ -183,12 +221,11 @@ fun NewRecordScreen(
             }
             Button(
                 onClick = {
-                    onSaveRecord(
-                        PressureLogModel(
-                            id = Random.nextLong(),
+                    newRecordViewModel.handleEvents(
+                        NewRecordScreenEvents.SavePressureRecord(
                             date = selectedDate,
-                            systolic = pressSystolic.toDouble(),
-                            diastolic = pressDistolic.toDouble(),
+                            systolic = sliderSystolic.toDouble(),
+                            diastolic = sliderDiastolic.toDouble(),
                             activity = selectState.id
                         )
                     )
@@ -202,22 +239,47 @@ fun NewRecordScreen(
 }
 
 @Composable
+fun PressureSlider(
+    pressure: Float,
+    label: String,
+    minPressure: Float,
+    maxPressure: Float,
+    onValueChange: (Float) -> Unit
+) {
+    Text(
+        text = label
+    )
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = pressure.toDouble().roundTo(2).toString(),
+        textAlign = TextAlign.Center,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp
+    )
+    Slider(
+        valueRange = minPressure..maxPressure,
+        value = pressure,
+        onValueChange = onValueChange
+    )
+}
+
+@Composable
 fun DatePickerSelector(
     onDateSelected: (Long) -> Unit
 ) {
+
     var showDatePicker by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(LocalDate.parse("2025-02-15")) }
+    var selectedDate by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            stringResource(
-                Res.string.title_field_date,
-                "${selectedDate.dayOfMonth}/${selectedDate.monthNumber}/${selectedDate.year}"
-            )
-        )
+        if (selectedDate.isEmpty()) {
+            Text(stringResource(Res.string.title_select_date))
+        } else {
+            Text(selectedDate)
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = { showDatePicker = true }) {
             Text(stringResource(Res.string.btn_select_date))
@@ -225,16 +287,32 @@ fun DatePickerSelector(
     }
 
     if (showDatePicker) {
-        DatePickerOverlay(
-            initialDate = selectedDate,
-            onDateSelected = { newDate ->
-                selectedDate = newDate
+        WheelDateTimePickerView(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 22.dp, bottom = 26.dp),
+            title = stringResource(Res.string.title_select_date),
+            doneLabel = stringResource(Res.string.btn_ok_dialog),
+            showDatePicker = showDatePicker,
+            rowCount = 5,
+            height = 170.dp,
+            shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp),
+            onDoneClick = {
+                selectedDate = dateTimeToString(it, "yyyy-MM-dd hh:mm a")
+                onDateSelected(localDateTimeToMillis(it))
                 showDatePicker = false
-                onDateSelected(newDate.toEpochDays().toLong())
             },
-            onDismissRequest = { showDatePicker = false }
+            onDismiss = {
+                showDatePicker = false
+            },
         )
     }
+}
+
+private fun localDateTimeToMillis(localDateTime: LocalDateTime): Long {
+    val instant: Instant = localDateTime.toInstant(TimeZone.currentSystemDefault())
+    return instant.toEpochMilliseconds()
+
 }
 
 @Composable
@@ -280,66 +358,3 @@ fun RowScope.ActivityButton(
         }
     }
 }
-
-@Composable
-fun DatePickerOverlay(
-    initialDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit,
-    onDismissRequest: () -> Unit
-) {
-    var selectedDate by remember { mutableStateOf(initialDate) }
-    Dialog(onDismissRequest = onDismissRequest) {
-        Surface(
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    stringResource(Res.string.title_select_date),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                // Show current date
-                Text(
-                    text = stringResource(
-                        Res.string.title_field_date,
-                        "${selectedDate.dayOfMonth}/${selectedDate.monthNumber}/${selectedDate.year}"
-                    ),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(onClick = {
-                        selectedDate = selectedDate.minus(DatePeriod(days = 1))
-                    }) {
-                        Text(stringResource(Res.string.btn_minus_date))
-                    }
-                    Button(onClick = {
-                        selectedDate = selectedDate.plus(DatePeriod(days = 1))
-                    }) {
-                        Text(stringResource(Res.string.btn_plus_date))
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onDismissRequest) {
-                        Text(stringResource(Res.string.btn_cancel_dialog))
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = { onDateSelected(selectedDate) }) {
-                        Text(stringResource(Res.string.btn_ok_dialog))
-                    }
-                }
-            }
-        }
-    }
-}
-
