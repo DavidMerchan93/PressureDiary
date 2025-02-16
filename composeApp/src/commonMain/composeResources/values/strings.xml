@@ -7,6 +7,8 @@
     <string name="title_select_date">Selecciona una fecha</string>
 
     <string name="title_no_records">No hay registros</string>
+    <string name="title_empty_date">Debe seleccionar una fecha.</string>
+    <string name="title_empty_activity">Debe seleccionar el estado de actividad.</string>
 
     <string name="title_home">Daily Pressure</string>
     <string name="title_new_record">Nuevo registro</string>

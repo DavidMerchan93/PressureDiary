@@ -74,6 +74,8 @@ import pressurediary.composeapp.generated.resources.btn_select_date
 import pressurediary.composeapp.generated.resources.rest
 import pressurediary.composeapp.generated.resources.run
 import pressurediary.composeapp.generated.resources.run_fast
+import pressurediary.composeapp.generated.resources.title_empty_activity
+import pressurediary.composeapp.generated.resources.title_empty_date
 import pressurediary.composeapp.generated.resources.title_error_save_log
 import pressurediary.composeapp.generated.resources.title_field_date
 import pressurediary.composeapp.generated.resources.title_new_record
@@ -110,7 +112,30 @@ fun NewRecordScreen(
     var sliderDiastolic by remember { mutableStateOf(80f) }
 
     var selectState by remember { mutableStateOf(UserState.DEFAULT) }
-    var selectedDate = 0L
+    var selectedDate by remember { mutableStateOf(0L) }
+
+    var dateNotFound by remember { mutableStateOf(false) }
+    var activityNotFound by remember { mutableStateOf(false) }
+
+    if (dateNotFound) {
+        ErrorFormDialog(
+            showDialog = dateNotFound,
+            message = stringResource(Res.string.title_empty_date),
+            onDismissRequest = {
+                dateNotFound = false
+            }
+        )
+    }
+
+    if (activityNotFound) {
+        ErrorFormDialog(
+            showDialog = activityNotFound,
+            message = stringResource(Res.string.title_empty_activity),
+            onDismissRequest = {
+                activityNotFound = false
+            }
+        )
+    }
 
     when {
         newRecordState.successSavedRecord -> {
@@ -221,14 +246,20 @@ fun NewRecordScreen(
             }
             Button(
                 onClick = {
-                    newRecordViewModel.handleEvents(
-                        NewRecordScreenEvents.SavePressureRecord(
-                            date = selectedDate,
-                            systolic = sliderSystolic.toDouble(),
-                            diastolic = sliderDiastolic.toDouble(),
-                            activity = selectState.id
-                        )
-                    )
+                    when {
+                        selectedDate == 0L -> dateNotFound = true
+                        selectState == UserState.DEFAULT -> activityNotFound = true
+                        else -> {
+                            newRecordViewModel.handleEvents(
+                                NewRecordScreenEvents.SavePressureRecord(
+                                    date = selectedDate,
+                                    systolic = sliderSystolic.toDouble(),
+                                    diastolic = sliderDiastolic.toDouble(),
+                                    activity = selectState.id
+                                )
+                            )
+                        }
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -236,6 +267,21 @@ fun NewRecordScreen(
             }
         }
     }
+}
+
+
+@Composable
+fun ErrorFormDialog(
+    showDialog: Boolean,
+    message: String,
+    onDismissRequest: () -> Unit
+) {
+    PressureDialog(
+        onDismissRequest = onDismissRequest,
+        showDialog = showDialog,
+        detail = message,
+        buttonOk = stringResource(Res.string.btn_ok_dialog)
+    )
 }
 
 @Composable

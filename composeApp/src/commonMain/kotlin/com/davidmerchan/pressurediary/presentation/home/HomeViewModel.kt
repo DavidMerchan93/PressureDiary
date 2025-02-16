@@ -13,11 +13,13 @@ class HomeViewModel(
     var homeState = mutableStateOf(HomeScreenState())
         private set
 
-    init {
-        handleEvent(HomeScreenEvents.LoadData)
+    fun handleEvent(event: HomeScreenEvents) {
+        when (event) {
+            HomeScreenEvents.LoadData -> getHomeRecords()
+        }
     }
 
-    fun handleEvent(event: HomeScreenEvents) {
+    private fun getHomeRecords() {
         viewModelScope.launch {
             val result = getHomeRecordsUseCase()
             when {
@@ -27,6 +29,7 @@ class HomeViewModel(
                         homeRecords = result.getOrNull() ?: emptyList()
                     )
                 }
+
                 result.isFailure -> {
                     println(result.exceptionOrNull()?.message)
                 }

@@ -13,6 +13,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,12 +28,15 @@ import io.ktor.websocket.Frame
 fun PressureDialog(
     title: String? = null,
     detail: String? = null,
+    showDialog: Boolean = true,
     buttonOk: String? = null,
     buttonCancel: String? = null,
     onOk: () -> Unit? = {},
     onCancel: () -> Unit? = {},
     onDismissRequest: () -> Unit
 ) {
+    if (showDialog.not()) return
+
     Dialog(
         onDismissRequest = onDismissRequest
     ) {
@@ -60,12 +67,18 @@ fun PressureDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     buttonOk?.let {
-                        TextButton(onClick = { onOk() }) {
+                        TextButton(onClick = {
+                            onDismissRequest()
+                            onOk()
+                        }) {
                             Text(buttonOk)
                         }
                     }
                     buttonCancel?.let {
-                        TextButton(onClick = { onCancel() }) {
+                        TextButton(onClick = {
+                            onDismissRequest()
+                            onCancel()
+                        }) {
                             Text(buttonCancel)
                         }
                     }
