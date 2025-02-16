@@ -29,20 +29,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.davidmerchan.pressurediary.domain.model.PressureLogModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import pressurediary.composeapp.generated.resources.Res
 import pressurediary.composeapp.generated.resources.btn_show_all
+import pressurediary.composeapp.generated.resources.title_home
 import pressurediary.composeapp.generated.resources.title_logs
+import pressurediary.composeapp.generated.resources.title_no_records
 import pressurediary.composeapp.generated.resources.title_press_item
-
-data class PressureModel(
-    val pressureA: Double,
-    val pressureB: Double,
-    val date: Long
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,12 +49,15 @@ fun HomeScreen(
     onAddNewRecord: () -> Unit,
     onGoToSettings: () -> Unit
 ) {
+    val homeViewModel = koinViewModel<HomeViewModel>()
+    val homeState = homeViewModel.homeState.value
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Daily Pressure")
+                    Text(stringResource(Res.string.title_home))
                 },
                 actions = {
                     TextButton(
@@ -91,15 +92,14 @@ fun HomeScreen(
                 .padding(8.dp),
         ) {
             Column {
-                LastRecords()
+                LastRecords(pressureLogs = homeState.homeRecords)
             }
         }
     }
 }
 
-
 @Composable
-fun LastRecords(modifier: Modifier = Modifier) {
+fun LastRecords(modifier: Modifier = Modifier, pressureLogs: List<PressureLogModel>) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -135,17 +135,28 @@ fun LastRecords(modifier: Modifier = Modifier) {
                     }
                 }
             }
-            Column {
-                PressureLogItem(PressureModel(120.0, 80.0, 1739651112))
-                PressureLogItem(PressureModel(120.0, 80.0, 1739651112))
-                PressureLogItem(PressureModel(120.0, 80.0, 1739651112))
+            if (pressureLogs.isNotEmpty()) {
+                Column {
+                    pressureLogs.forEach {
+                        PressureLogItem(it)
+                    }
+                }
+            } else {
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    text = stringResource(Res.string.title_no_records),
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
             }
         }
     }
 }
 
 @Composable
-fun PressureLogItem(pressure: PressureModel) {
+fun PressureLogItem(pressure: PressureLogModel) {
     Column {
         Column(
             modifier = Modifier.padding(12.dp)
@@ -160,7 +171,7 @@ fun PressureLogItem(pressure: PressureModel) {
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "${pressure.pressureA} / ${pressure.pressureB}",
+                text = "${pressure.systolic} / ${pressure.diastolic}",
                 fontSize = 28.sp,
                 textAlign = TextAlign.Center,
                 style = TextStyle(

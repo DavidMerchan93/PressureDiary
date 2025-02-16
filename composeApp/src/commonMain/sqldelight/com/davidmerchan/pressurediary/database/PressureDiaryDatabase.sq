@@ -1,0 +1,19 @@
+CREATE TABLE PressureLog (
+    id INTEGER NOT NULL,
+    uid INTEGER NOT NULL,
+    date INTEGER NOT NULL,
+    systolic TEXT NOT NULL,
+    diastolic TEXT NOT NULL,
+    activity INTEGER NOT NULL
+);
+
+insertPressureLog:
+INSERT INTO PressureLog(id, uid, date, systolic, diastolic, activity)
+VALUES(?, ?, ?, ?, ?, ?);
+
+removeAllPressureLog:
+DELETE FROM PressureLog;
+
+selectAllPressureLogInfo:
+SELECT PressureLog.*
+FROM PressureLog;

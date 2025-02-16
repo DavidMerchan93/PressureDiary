@@ -6,6 +6,9 @@
     <string name="title_field_date">Fecha: %1$s</string>
     <string name="title_select_date">Selecciona una fecha</string>
 
+    <string name="title_no_records">No hay registros</string>
+
+    <string name="title_home">Daily Pressure</string>
     <string name="title_new_record">Nuevo registro</string>
     <string name="title_settings">Ajustes</string>
 
