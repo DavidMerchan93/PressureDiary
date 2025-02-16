@@ -3,9 +3,23 @@
     <string name="title_press_diastolic">Presión diastólica</string>
     <string name="title_press_item">Presión Sistolica / Presión Diastólica</string>
     <string name="title_logs">Registros</string>
-    <string name="title_field_date">DD/MM/AAAA</string>
+    <string name="title_field_date">Fecha: %1$s</string>
+    <string name="title_select_date">Selecciona una fecha</string>
+
+    <string name="title_new_record">Nuevo registro</string>
+    <string name="title_settings">Ajustes</string>
+
+    <string name="title_user_state">Estado durante la medición</string>
+    <string name="title_status_rest">Reposo</string>
+    <string name="title_status_run">Leve</string>
+    <string name="title_status_run_fast">Intensa</string>
 
     <string name="btn_show_all">Ver todos</string>
     <string name="btn_save_record">Guardar</string>
+    <string name="btn_select_date">Elegir fecha</string>
+    <string name="btn_minus_date">- Día</string>
+    <string name="btn_plus_date">+ Día</string>
+    <string name="btn_cancel_dialog">Cancelar</string>
+    <string name="btn_ok_dialog">Aceptar</string>
 
 </resources>
