@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.davidmerchan.pressurediary.presentation.history.HistoryScreen
 import com.davidmerchan.pressurediary.presentation.home.HomeScreen
 import com.davidmerchan.pressurediary.presentation.newRecord.NewRecordScreen
 import com.davidmerchan.pressurediary.presentation.settings.SettingsScreen
@@ -18,6 +19,9 @@ sealed interface Screen {
 
     @Serializable
     data object Settings : Screen
+
+    @Serializable
+    data object History : Screen
 }
 
 @Composable
@@ -34,6 +38,9 @@ fun AppNavigation() {
                 },
                 onGoToSettings = {
                     navController.navigate(Screen.Settings)
+                },
+                onGotToHistory = {
+                    navController.navigate(Screen.History)
                 }
             )
         }
@@ -46,6 +53,13 @@ fun AppNavigation() {
         }
         composable<Screen.Settings> {
             SettingsScreen(
+                onBackPressed = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable<Screen.History> {
+            HistoryScreen(
                 onBackPressed = {
                     navController.popBackStack()
                 }

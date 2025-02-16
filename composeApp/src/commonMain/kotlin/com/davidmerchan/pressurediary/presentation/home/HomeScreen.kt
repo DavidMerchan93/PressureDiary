@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidmerchan.pressurediary.domain.model.PressureLogModel
+import com.davidmerchan.pressurediary.presentation.components.PressureLogItem
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -48,7 +49,8 @@ import pressurediary.composeapp.generated.resources.title_press_item
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onAddNewRecord: () -> Unit,
-    onGoToSettings: () -> Unit
+    onGoToSettings: () -> Unit,
+    onGotToHistory: () -> Unit
 ) {
     val homeViewModel = koinViewModel<HomeViewModel>()
     val homeState = homeViewModel.homeState.value
@@ -97,14 +99,21 @@ fun HomeScreen(
                 .padding(8.dp),
         ) {
             Column {
-                LastRecords(pressureLogs = homeState.homeRecords)
+                LastRecords(
+                    pressureLogs = homeState.homeRecords,
+                    onGotToHistory = onGotToHistory
+                )
             }
         }
     }
 }
 
 @Composable
-fun LastRecords(modifier: Modifier = Modifier, pressureLogs: List<PressureLogModel>) {
+fun LastRecords(
+    modifier: Modifier = Modifier,
+    pressureLogs: List<PressureLogModel>,
+    onGotToHistory: () -> Unit = {}
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -129,7 +138,7 @@ fun LastRecords(modifier: Modifier = Modifier, pressureLogs: List<PressureLogMod
                     )
                 )
                 TextButton(
-                    onClick = {}
+                    onClick = onGotToHistory
                 ) {
                     Row {
                         Text(stringResource(Res.string.btn_show_all))
@@ -158,39 +167,4 @@ fun LastRecords(modifier: Modifier = Modifier, pressureLogs: List<PressureLogMod
             }
         }
     }
-}
-
-@Composable
-fun PressureLogItem(pressure: PressureLogModel) {
-    Column {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
-            Text(
-                text = formatTimestamp(pressure.date),
-                fontSize = 18.sp
-            )
-            Text(
-                text = stringResource(Res.string.title_press_item),
-                fontSize = 12.sp,
-            )
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "${pressure.systolic} / ${pressure.diastolic}",
-                fontSize = 28.sp,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold
-                )
-            )
-        }
-        HorizontalDivider()
-    }
-}
-
-fun formatTimestamp(timestamp: Long): String {
-    val dateTime = Instant.fromEpochMilliseconds(timestamp)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-
-    return "${dateTime.dayOfMonth}, ${dateTime.month} de ${dateTime.year}"
 }

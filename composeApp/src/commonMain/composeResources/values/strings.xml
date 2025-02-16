@@ -13,6 +13,7 @@
     <string name="title_home">Daily Pressure</string>
     <string name="title_new_record">Nuevo registro</string>
     <string name="title_settings">Ajustes</string>
+    <string name="title_history">Historial</string>
 
     <string name="title_user_state">Estado durante la medición</string>
     <string name="title_status_rest">Reposo</string>
@@ -20,6 +21,11 @@
     <string name="title_status_run_fast">Intensa</string>
     <string name="title_error_save_log">Lo sentimos, no se pudo guardar el registro.</string>
     <string name="title_success_save_log">Registro almacenado con éxito.</string>
+
+    <string name="message_load_records">Cargando registros ...</string>
+
+    <string name="title_general_error">Ups !!</string>
+    <string name="messages_general_error">Lo sentimos, ha ocurrido un error inesperado, pronto lo solucionaremos.</string>
 
     <string name="btn_show_all">Ver todos</string>
     <string name="btn_save_record">Guardar</string>
