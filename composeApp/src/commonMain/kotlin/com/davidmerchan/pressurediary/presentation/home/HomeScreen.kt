@@ -14,7 +14,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,9 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidmerchan.pressurediary.domain.model.PressureLogModel
 import com.davidmerchan.pressurediary.presentation.components.PressureLogItem
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pressurediary.composeapp.generated.resources.Res
@@ -42,7 +38,6 @@ import pressurediary.composeapp.generated.resources.btn_show_all
 import pressurediary.composeapp.generated.resources.title_home
 import pressurediary.composeapp.generated.resources.title_logs
 import pressurediary.composeapp.generated.resources.title_no_records
-import pressurediary.composeapp.generated.resources.title_press_item
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

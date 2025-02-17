@@ -1,5 +1,8 @@
-package com.davidmerchan.pressurediary.presentation.theme.settings
+package com.davidmerchan.pressurediary.presentation.settings
+
+import com.davidmerchan.pressurediary.domain.model.UserSettingsModel
 
 data class SettingsScreenState(
-    val isLoading: Boolean = false
+    val userData: UserSettingsModel? = null,
+    val isSaved: Boolean? = null
 )

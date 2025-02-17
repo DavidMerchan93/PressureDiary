@@ -64,6 +64,9 @@ kotlin {
             implementation(libs.koin.composeVM)
 
             implementation(libs.kmp.date.time.picker)
+
+            api(libs.datastore.preferences)
+            api(libs.datastore)
         }
     }
 }

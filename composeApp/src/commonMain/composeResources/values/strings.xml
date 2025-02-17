@@ -27,8 +27,12 @@
     <string name="title_general_error">Ups !!</string>
     <string name="messages_general_error">Lo sentimos, ha ocurrido un error inesperado, pronto lo solucionaremos.</string>
 
+    <string name="title_is_smoke">Fumador(ra):</string>
+    <string name="title_gender">Genero:</string>
     <string name="title_general_male">Hombre</string>
     <string name="title_general_female">Mujer</string>
+    <string name="title_success_save_settings">Datos de usuario actualizados con éxito.</string>
+    <string name="title_failure_save_settings">Lo sentimos, surgio un error al actualizar los datos de usuario, intenta mas tarde.</string>
 
     <string name="btn_show_all">Ver todos</string>
     <string name="btn_save_record">Guardar</string>
