@@ -10,13 +10,18 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.mutablePreferencesOf
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.davidmerchan.pressurediary.data.database.LocalDataSource
+import com.davidmerchan.pressurediary.data.model.HealthCareApi
+import com.davidmerchan.pressurediary.data.network.NetworkConfig
+import com.davidmerchan.pressurediary.data.repository.HealthCareTipsDatasource
 import com.davidmerchan.pressurediary.data.repository.PressureLogDatasource
 import com.davidmerchan.pressurediary.data.repository.UserSettingsDatasource
 import com.davidmerchan.pressurediary.di.DispatcherProvider
 import com.davidmerchan.pressurediary.di.initializeKoin
+import com.davidmerchan.pressurediary.domain.repository.HealthCareTipsRepository
 import com.davidmerchan.pressurediary.domain.repository.PressureLogRepository
 import com.davidmerchan.pressurediary.domain.repository.UserSettingsRepository
 import com.davidmerchan.pressurediary.domain.useCase.GetAllRecordsUseCase
+import com.davidmerchan.pressurediary.domain.useCase.GetHealthCareTipUseCase
 import com.davidmerchan.pressurediary.domain.useCase.GetHomeRecordsUseCase
 import com.davidmerchan.pressurediary.domain.useCase.GetIMCUseCase
 import com.davidmerchan.pressurediary.domain.useCase.GetUserSettingsUseCase
@@ -27,6 +32,7 @@ import com.davidmerchan.pressurediary.presentation.home.HomeViewModel
 import com.davidmerchan.pressurediary.presentation.newRecord.NewRecordViewModel
 import com.davidmerchan.pressurediary.presentation.settings.SettingsViewModel
 import com.davidmerchan.pressurediary.presentation.theme.history.HistoryViewModel
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -55,6 +61,8 @@ abstract class BaseTest : KoinTest {
             )
         }
 
+        single<HttpClient> { NetworkConfig.createHttpClient() }
+
         single<DataStore<Preferences>> {
             FakeDataStore(
                 initialPrefs = mutablePreferencesOf(
@@ -67,9 +75,11 @@ abstract class BaseTest : KoinTest {
                 )
             )
         }
+        single { HealthCareApi(get()) }
         single<LocalDataSource> { FakeLocalDataSource() }
         single<PressureLogRepository> { PressureLogDatasource(get(), get()) }
         single<UserSettingsRepository> { UserSettingsDatasource(get(), get()) }
+        single<HealthCareTipsRepository> { HealthCareTipsDatasource(get(), get()) }
 
         // Domain
         single { GetHomeRecordsUseCase(get()) }
@@ -79,9 +89,10 @@ abstract class BaseTest : KoinTest {
         single { SaveUserSettingsUseCase(get()) }
         single { GetIMCUseCase(get()) }
         single { HasCardiovascularRiskUserCase(get(), get(), get()) }
+        single { GetHealthCareTipUseCase(get()) }
 
         // Presentation
-        single { HomeViewModel(get(), get(), get()) }
+        single { HomeViewModel(get(), get(), get(), get()) }
         single { NewRecordViewModel(get()) }
         single { HistoryViewModel(get()) }
         single { SettingsViewModel(get(), get()) }

@@ -9,6 +9,7 @@
     <string name="title_imc_result">El IMC es: %1$s, clasificación: %2$s.</string>
     <string name="title_no_cardio_risk">No contamos con los datos necesarios para cargar el riesgo cardiovascular, para configurarlos ve a ajustes.</string>
     <string name="title_cardio_risk">Con base en los datos suministrados, el riesgo cardiovascular es: %1$s.</string>
+    <string name="title_tip_today">Tip del día:</string>
 
     <string name="title_low_risk">Bajo</string>
     <string name="title_medium_risk">Medio</string>

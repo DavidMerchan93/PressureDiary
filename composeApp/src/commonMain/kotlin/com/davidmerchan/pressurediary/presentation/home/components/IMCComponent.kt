@@ -33,7 +33,7 @@ fun IMCComponent(modifier: Modifier = Modifier, imcModel: IMCModel?) {
         Column(
             modifier = Modifier.padding(18.dp)
         ) {
-            if (imcModel != null && imcModel.classification != IMCClassification.DEFAULT) {
+            if (imcModel != null && imcModel.imc > .0 && imcModel.classification != IMCClassification.DEFAULT) {
                 Text(
                     stringResource(
                         Res.string.title_imc_result,

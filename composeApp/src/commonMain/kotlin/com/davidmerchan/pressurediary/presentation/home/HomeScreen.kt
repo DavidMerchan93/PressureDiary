@@ -1,5 +1,6 @@
 package com.davidmerchan.pressurediary.presentation.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.davidmerchan.pressurediary.domain.model.CardiovascularRiskModel
 import com.davidmerchan.pressurediary.domain.model.IMCClassification
+import com.davidmerchan.pressurediary.presentation.home.components.HealthCareTips
 import com.davidmerchan.pressurediary.presentation.home.components.IMCComponent
 import com.davidmerchan.pressurediary.presentation.home.components.LastRecords
 import org.jetbrains.compose.resources.stringResource
@@ -61,6 +63,7 @@ fun HomeScreen(
         homeViewModel.handleEvent(HomeScreenEvents.LoadData)
         homeViewModel.handleEvent(HomeScreenEvents.GetIMC)
         homeViewModel.handleEvent(HomeScreenEvents.GetCardiovascularRisk)
+        homeViewModel.handleEvent(HomeScreenEvents.GetHealthCareTip)
     }
 
     Scaffold(
@@ -104,6 +107,11 @@ fun HomeScreen(
         ) {
             LazyColumn {
                 item {
+
+                    AnimatedVisibility(homeState.healthCareTip != null) {
+                        HealthCareTips(tip = homeState.healthCareTip!!)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     LastRecords(
                         pressureLogs = homeState.homeRecords,
                         onGotToHistory = onGotToHistory
@@ -113,6 +121,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     CardiovascularRisk(cardiovascularRisk = homeState.cardiovascularRisk)
                     Spacer(modifier = Modifier.height(40.dp))
+
                 }
             }
         }

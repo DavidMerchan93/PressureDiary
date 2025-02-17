@@ -8,4 +8,5 @@ data class HomeScreenState(
     val homeRecords: List<PressureLogModel> = emptyList(),
     val imcResult: IMCModel? = null,
     val cardiovascularRisk: CardiovascularRiskModel? = null,
+    val healthCareTip: String? = null,
 )

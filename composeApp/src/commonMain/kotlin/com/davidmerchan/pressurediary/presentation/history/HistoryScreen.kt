@@ -69,7 +69,7 @@ fun HistoryScreen(
         }
     ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
             when {
                 historyState.isLoading -> {
