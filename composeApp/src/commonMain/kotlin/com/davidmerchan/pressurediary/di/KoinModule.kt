@@ -15,20 +15,24 @@ import com.davidmerchan.pressurediary.domain.useCase.InsertNewRecordUseCase
 import com.davidmerchan.pressurediary.domain.useCase.SaveUserSettingsUseCase
 import com.davidmerchan.pressurediary.presentation.home.HomeViewModel
 import com.davidmerchan.pressurediary.presentation.newRecord.NewRecordViewModel
-import com.davidmerchan.pressurediary.presentation.theme.history.HistoryViewModel
 import com.davidmerchan.pressurediary.presentation.settings.SettingsViewModel
+import com.davidmerchan.pressurediary.presentation.theme.history.HistoryViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 expect val targetModule: Module
 
 val sharedModule = module {
+    //Dispatcher
+    factory { DispatcherProvider() }
+
     // Data
     single<LocalDataSource> { LocalDatabase(get()) }
-    single<PressureLogRepository> { PressureLogDatasource(get()) }
-    single<UserSettingsRepository> { UserSettingsDatasource(get()) }
+    single<PressureLogRepository> { PressureLogDatasource(get(), get()) }
+    single<UserSettingsRepository> { UserSettingsDatasource(get(), get()) }
 
     // Domain
     single { GetHomeRecordsUseCase(get()) }
@@ -40,10 +44,10 @@ val sharedModule = module {
     single { HasCardiovascularRiskUserCase(get(), get(), get()) }
 
     // Presentation
-    factory { HomeViewModel(get(), get(), get()) }
-    factory { NewRecordViewModel(get()) }
-    factory { HistoryViewModel(get()) }
-    factory { SettingsViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }
+    viewModel { NewRecordViewModel(get()) }
+    viewModel { HistoryViewModel(get()) }
+    viewModel { SettingsViewModel(get(), get()) }
 }
 
 fun initializeKoin(config: (KoinApplication.() -> Unit)? = null) {

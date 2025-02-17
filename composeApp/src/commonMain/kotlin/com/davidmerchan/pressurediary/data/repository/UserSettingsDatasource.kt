@@ -7,13 +7,16 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.davidmerchan.pressurediary.di.DispatcherProvider
 import com.davidmerchan.pressurediary.domain.model.UserSettingsModel
 import com.davidmerchan.pressurediary.domain.repository.UserSettingsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class UserSettingsDatasource(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val dispatcher: DispatcherProvider
 ): UserSettingsRepository {
 
     private val uidKey = stringPreferencesKey("UID_KEY")
@@ -24,33 +27,37 @@ class UserSettingsDatasource(
     private val genderKey = intPreferencesKey("GENDER_KEY")
 
     override suspend fun saveUserSettings(userSettings: UserSettingsModel): Result<Boolean> {
-        return try {
-            dataStore.edit { preferences ->
-                preferences[uidKey] = userSettings.uid
-                preferences[ageKey] = userSettings.age
-                preferences[weightKey] = userSettings.weight
-                preferences[heightKey] = userSettings.height
-                preferences[smokeKey] = userSettings.smoke
-                preferences[genderKey] = userSettings.gender
+        return withContext(dispatcher.io) {
+            try {
+                dataStore.edit { preferences ->
+                    preferences[uidKey] = userSettings.uid
+                    preferences[ageKey] = userSettings.age
+                    preferences[weightKey] = userSettings.weight
+                    preferences[heightKey] = userSettings.height
+                    preferences[smokeKey] = userSettings.smoke
+                    preferences[genderKey] = userSettings.gender
+                }
+                Result.success(true)
+            }catch (e: Exception) {
+                Result.failure(e)
             }
-            Result.success(true)
-        }catch (e: Exception) {
-            Result.failure(e)
         }
     }
 
     override suspend fun getUserSettings(): Result<UserSettingsModel> {
-        return try {
-            val uid = dataStore.data.map { it[uidKey] ?: "" }.first()
-            val age = dataStore.data.map { it[ageKey] ?: 0 }.first()
-            val weight = dataStore.data.map { it[weightKey] ?: 0.0 }.first()
-            val height = dataStore.data.map { it[heightKey] ?: 0.0 }.first()
-            val smoke = dataStore.data.map { it[smokeKey] ?: false }.first()
-            val gender = dataStore.data.map { it[genderKey] ?: 0 }.first()
+        return withContext(dispatcher.io) {
+            try {
+                val uid = dataStore.data.map { it[uidKey] ?: "" }.first()
+                val age = dataStore.data.map { it[ageKey] ?: 0 }.first()
+                val weight = dataStore.data.map { it[weightKey] ?: 0.0 }.first()
+                val height = dataStore.data.map { it[heightKey] ?: 0.0 }.first()
+                val smoke = dataStore.data.map { it[smokeKey] ?: false }.first()
+                val gender = dataStore.data.map { it[genderKey] ?: 0 }.first()
 
-            Result.success(UserSettingsModel(uid, age, weight, height, smoke, gender))
-        } catch (e: Exception) {
-            Result.failure(e)
+                Result.success(UserSettingsModel(uid, age, weight, height, smoke, gender))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
     }
 }
