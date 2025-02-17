@@ -2,13 +2,14 @@ package com.davidmerchan.pressurediary.presentation.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,22 +23,28 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.davidmerchan.pressurediary.domain.model.PressureLogModel
-import com.davidmerchan.pressurediary.presentation.components.PressureLogItem
+import com.davidmerchan.pressurediary.domain.model.CardiovascularRiskModel
+import com.davidmerchan.pressurediary.domain.model.IMCClassification
+import com.davidmerchan.pressurediary.presentation.home.components.IMCComponent
+import com.davidmerchan.pressurediary.presentation.home.components.LastRecords
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pressurediary.composeapp.generated.resources.Res
-import pressurediary.composeapp.generated.resources.btn_show_all
+import pressurediary.composeapp.generated.resources.title_cardio_risk
+import pressurediary.composeapp.generated.resources.title_high_risk
 import pressurediary.composeapp.generated.resources.title_home
-import pressurediary.composeapp.generated.resources.title_logs
-import pressurediary.composeapp.generated.resources.title_no_records
+import pressurediary.composeapp.generated.resources.title_imc_result
+import pressurediary.composeapp.generated.resources.title_low_risk
+import pressurediary.composeapp.generated.resources.title_low_weight
+import pressurediary.composeapp.generated.resources.title_medium_risk
+import pressurediary.composeapp.generated.resources.title_no_cardio_risk
+import pressurediary.composeapp.generated.resources.title_no_imc
+import pressurediary.composeapp.generated.resources.title_normal_weight
+import pressurediary.composeapp.generated.resources.title_obese
+import pressurediary.composeapp.generated.resources.title_overweight
+import pressurediary.composeapp.generated.resources.title_very_high_risk
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +59,8 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         homeViewModel.handleEvent(HomeScreenEvents.LoadData)
+        homeViewModel.handleEvent(HomeScreenEvents.GetIMC)
+        homeViewModel.handleEvent(HomeScreenEvents.GetCardiovascularRisk)
     }
 
     Scaffold(
@@ -93,21 +102,27 @@ fun HomeScreen(
                 .padding(padding)
                 .padding(8.dp),
         ) {
-            Column {
-                LastRecords(
-                    pressureLogs = homeState.homeRecords,
-                    onGotToHistory = onGotToHistory
-                )
+            LazyColumn {
+                item {
+                    LastRecords(
+                        pressureLogs = homeState.homeRecords,
+                        onGotToHistory = onGotToHistory
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    IMCComponent(imcModel = homeState.imcResult)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CardiovascularRisk(cardiovascularRisk = homeState.cardiovascularRisk)
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-fun LastRecords(
+fun CardiovascularRisk(
     modifier: Modifier = Modifier,
-    pressureLogs: List<PressureLogModel>,
-    onGotToHistory: () -> Unit = {}
+    cardiovascularRisk: CardiovascularRiskModel?
 ) {
     Card(
         modifier = modifier
@@ -117,48 +132,23 @@ fun LastRecords(
         elevation = CardDefaults.elevatedCardElevation(8.dp)
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(18.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            if (cardiovascularRisk != null && cardiovascularRisk != CardiovascularRiskModel.NOT_APPLICABLE) {
                 Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 12.dp),
-                    text = stringResource(Res.string.title_logs),
-                    fontSize = 20.sp,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold
+                    stringResource(
+                        Res.string.title_cardio_risk,
+                        when(cardiovascularRisk) {
+                            CardiovascularRiskModel.LOW -> stringResource(Res.string.title_low_risk)
+                            CardiovascularRiskModel.MEDIUM -> stringResource(Res.string.title_medium_risk)
+                            CardiovascularRiskModel.HIGH -> stringResource(Res.string.title_high_risk)
+                            CardiovascularRiskModel.VERY_HIGH -> stringResource(Res.string.title_very_high_risk)
+                            CardiovascularRiskModel.NOT_APPLICABLE -> ""
+                        }
                     )
                 )
-                TextButton(
-                    onClick = onGotToHistory
-                ) {
-                    Row {
-                        Text(stringResource(Res.string.btn_show_all))
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = null
-                        )
-                    }
-                }
-            }
-            if (pressureLogs.isNotEmpty()) {
-                Column {
-                    pressureLogs.forEach {
-                        PressureLogItem(it)
-                    }
-                }
             } else {
-                Text(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    text = stringResource(Res.string.title_no_records),
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold
-                    )
-                )
+                Text(stringResource(Res.string.title_no_cardio_risk))
             }
         }
     }

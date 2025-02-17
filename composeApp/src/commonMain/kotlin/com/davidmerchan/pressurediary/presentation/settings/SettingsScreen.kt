@@ -45,6 +45,10 @@ import pressurediary.composeapp.generated.resources.btn_save_record
 import pressurediary.composeapp.generated.resources.female
 import pressurediary.composeapp.generated.resources.male
 import pressurediary.composeapp.generated.resources.title_failure_save_settings
+import pressurediary.composeapp.generated.resources.title_field_age
+import pressurediary.composeapp.generated.resources.title_field_height
+import pressurediary.composeapp.generated.resources.title_field_user_id
+import pressurediary.composeapp.generated.resources.title_field_weight
 import pressurediary.composeapp.generated.resources.title_gender
 import pressurediary.composeapp.generated.resources.title_general_female
 import pressurediary.composeapp.generated.resources.title_general_male
@@ -134,14 +138,14 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.Center
         ) {
             PressureTextField(
-                label = "Numero de identificacion",
+                label = stringResource(Res.string.title_field_user_id),
                 value = uid,
                 onValueChange = {
                     uid = it
                 }
             )
             PressureTextField(
-                label = "Edad",
+                label = stringResource(Res.string.title_field_age),
                 value = age.toString(),
                 type = KeyboardType.Number,
                 onValueChange = {
@@ -151,7 +155,7 @@ fun SettingsScreen(
                 }
             )
             PressureTextField(
-                label = "Peso",
+                label = stringResource(Res.string.title_field_weight),
                 value = weight.toString(),
                 type = KeyboardType.Decimal,
                 onValueChange = {
@@ -161,7 +165,7 @@ fun SettingsScreen(
                 }
             )
             PressureTextField(
-                label = "Altura",
+                label = stringResource(Res.string.title_field_height),
                 value = height.toString(),
                 type = KeyboardType.Decimal,
                 onValueChange = {

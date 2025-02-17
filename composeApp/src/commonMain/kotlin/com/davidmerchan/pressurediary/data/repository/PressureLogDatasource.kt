@@ -49,4 +49,21 @@ class PressureLogDatasource(
             Result.failure(e)
         }
     }
+
+    override suspend fun getLastPressureLog(): Result<PressureLogModel> {
+        return try {
+            val result = localDataSource.getLastRecord()
+            Result.success(
+                PressureLogModel(
+                    id = result.id,
+                    date = result.date,
+                    systolic = result.systolic.toDouble(),
+                    diastolic = result.diastolic.toDouble(),
+                    activity = result.activity.toInt()
+                )
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

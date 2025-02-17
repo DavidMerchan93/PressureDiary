@@ -26,6 +26,11 @@ class LocalDatabase(
             .executeAsList()
     }
 
+    override suspend fun getLastRecord(): PressureLog {
+        return query.selectLastPressureLogInfo()
+            .executeAsOne()
+    }
+
     override suspend fun insertPressureLog(pressureLogModel: PressureLogModel) {
         query.insertPressureLog(
             id = pressureLogModel.id,

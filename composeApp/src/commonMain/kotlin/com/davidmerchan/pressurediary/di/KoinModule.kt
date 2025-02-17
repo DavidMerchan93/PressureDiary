@@ -8,7 +8,9 @@ import com.davidmerchan.pressurediary.domain.repository.PressureLogRepository
 import com.davidmerchan.pressurediary.domain.repository.UserSettingsRepository
 import com.davidmerchan.pressurediary.domain.useCase.GetAllRecordsUseCase
 import com.davidmerchan.pressurediary.domain.useCase.GetHomeRecordsUseCase
+import com.davidmerchan.pressurediary.domain.useCase.GetIMCUseCase
 import com.davidmerchan.pressurediary.domain.useCase.GetUserSettingsUseCase
+import com.davidmerchan.pressurediary.domain.useCase.HasCardiovascularRiskUserCase
 import com.davidmerchan.pressurediary.domain.useCase.InsertNewRecordUseCase
 import com.davidmerchan.pressurediary.domain.useCase.SaveUserSettingsUseCase
 import com.davidmerchan.pressurediary.presentation.home.HomeViewModel
@@ -34,9 +36,11 @@ val sharedModule = module {
     single { InsertNewRecordUseCase(get()) }
     single { GetUserSettingsUseCase(get()) }
     single { SaveUserSettingsUseCase(get()) }
+    single { GetIMCUseCase(get()) }
+    single { HasCardiovascularRiskUserCase(get(), get(), get()) }
 
     // Presentation
-    factory { HomeViewModel(get()) }
+    factory { HomeViewModel(get(), get(), get()) }
     factory { NewRecordViewModel(get()) }
     factory { HistoryViewModel(get()) }
     factory { SettingsViewModel(get(), get()) }

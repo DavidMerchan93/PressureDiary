@@ -18,3 +18,9 @@ selectAllPressureLogInfo:
 SELECT PressureLog.*
 FROM PressureLog
 ORDER BY date DESC;
+
+selectLastPressureLogInfo:
+SELECT PressureLog.*
+FROM PressureLog
+ORDER BY date DESC
+LIMIT 1;
