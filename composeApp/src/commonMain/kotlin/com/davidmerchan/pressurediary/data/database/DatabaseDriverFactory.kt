@@ -18,7 +18,7 @@ class LocalDatabase(
     override suspend fun getHomeRecords(size: Int): List<PressureLog> {
         return query.selectAllPressureLogInfo()
             .executeAsList()
-            .takeLast(size)
+            .take(size)
     }
 
     override suspend fun getAllRecords(): List<PressureLog> {

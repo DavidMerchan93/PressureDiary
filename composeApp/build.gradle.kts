@@ -68,6 +68,12 @@ kotlin {
             api(libs.datastore.preferences)
             api(libs.datastore)
         }
+        commonTest.dependencies {
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.kotlin.test)
+            implementation(libs.koin.test)
+
+        }
     }
 }
 

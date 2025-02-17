@@ -1,8 +1,10 @@
 package com.davidmerchan.pressurediary.presentation.history
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -66,36 +68,40 @@ fun HistoryScreen(
             )
         }
     ) { innerPadding ->
-
-        when {
-            historyState.isLoading -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                    Text(stringResource(Res.string.message_load_records))
+        Box(
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            when {
+                historyState.isLoading -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                        Text(stringResource(Res.string.message_load_records))
+                    }
                 }
-            }
 
-            historyState.error != null -> {
-                PressureDialog(
-                    title = stringResource(Res.string.title_general_error),
-                    detail = stringResource(Res.string.messages_general_error),
-                    buttonOk = stringResource(Res.string.btn_ok_dialog),
-                    onDismissRequest = {}
-                )
-            }
+                historyState.error != null -> {
+                    PressureDialog(
+                        title = stringResource(Res.string.title_general_error),
+                        detail = stringResource(Res.string.messages_general_error),
+                        buttonOk = stringResource(Res.string.btn_ok_dialog),
+                        onDismissRequest = {}
+                    )
+                }
 
-            historyState.records?.isNotEmpty() == true -> {
-                LazyColumn(
-                    modifier = modifier.padding(innerPadding),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    items(historyState.records) { item ->
-                        PressureLogItem(item)
+                historyState.records?.isNotEmpty() == true -> {
+                    LazyColumn(
+                        modifier = modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        items(historyState.records) { item ->
+                            PressureLogItem(item)
+                        }
                     }
                 }
             }

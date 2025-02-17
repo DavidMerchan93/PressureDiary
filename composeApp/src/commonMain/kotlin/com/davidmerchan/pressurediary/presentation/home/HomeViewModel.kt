@@ -30,8 +30,7 @@ class HomeViewModel(
             val result = getHomeRecordsUseCase()
             when {
                 result.isSuccess -> {
-                    homeState.value = HomeScreenState(
-                        isLoading = false,
+                    homeState.value = homeState.value.copy(
                         homeRecords = result.getOrNull() ?: emptyList()
                     )
                 }
@@ -69,6 +68,7 @@ class HomeViewModel(
                         cardiovascularRisk = result.getOrNull()
                     )
                 }
+
                 result.isFailure -> {
                     println(result.exceptionOrNull()?.message)
                 }
