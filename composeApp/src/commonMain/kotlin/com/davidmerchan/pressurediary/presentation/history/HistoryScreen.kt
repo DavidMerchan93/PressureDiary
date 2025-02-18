@@ -96,8 +96,6 @@ fun HistoryScreen(
                     LazyColumn(
                         modifier = modifier
                             .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         items(historyState.records) { item ->
                             PressureLogItem(item)
