@@ -12,6 +12,11 @@ PressureDiary es un proyecto desarrollado en **Kotlin Multiplatform (KMP)** que 
 * `/iosApp` contiene las aplicaciones iOS. Incluso si estás compartiendo tu UI con Compose Multiplataforma,
   necesitas este punto de entrada para tu aplicación iOS. Aquí es también donde debes añadir el código SwiftUI para tu proyecto.
 
+<img width="320" src="https://github.com/user-attachments/assets/2c9e9cc6-1156-4322-be62-d4e1924b0d37" />
+<img width="320" src="https://github.com/user-attachments/assets/1277392f-a28f-4011-b87b-342976f1feaf" />
+<img width="320" src="https://github.com/user-attachments/assets/97bf0614-a9a7-4239-9d5f-64c67e88a151" />
+<img width="320" src="https://github.com/user-attachments/assets/ab73af37-96a4-43be-a275-248fc13ddece" />
+
 ## Tecnologías Utilizadas
 
 - **Kotlin Multiplatform (KMP):** Código compartido entre plataformas.
@@ -70,6 +75,8 @@ Los tests unitarios se encuentran en el módulo commonTest.
 Para ejecutarlos:
 - Haz clic derecho sobre el directorio test y selecciona Run Tests desde Android Studio.
 
+<img src="https://github.com/user-attachments/assets/746536df-a440-4c3f-b8da-a5c063f512f7" />
+
 ## Buenas Prácticas ##
 
   ```bash
@@ -78,4 +85,9 @@ Para ejecutarlos:
 	- Separation of Concerns: Aplicación de Clean Architecture para separar la lógica de negocio, la presentación y la gestión de datos.
 	- Pruebas Automatizadas: Implementación de tests unitarios para garantizar la calidad del código.
   ```
+
+
+## Licencia
+
+Este proyecto se distribuye bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
 
